@@ -1,0 +1,36 @@
+FROM ubuntu:xenial
+
+RUN apt-get update
+
+RUN apt-get install -y openjdk-8-jdk
+RUN apt-get install -y imagemagick
+RUN apt-get install -y libsqlite3-dev
+RUN apt-get install -y git curl automake build-essential
+
+# Dependencies for Ruby
+RUN apt-get install -y libssl-dev libreadline-dev
+
+#Install Ruby
+RUN mkdir -p /opt/ruby
+WORKDIR /opt/ruby
+RUN curl https://cache.ruby-lang.org/pub/ruby/2.2/ruby-2.2.2.tar.gz | tar zx
+WORKDIR /opt/ruby/ruby-2.2.2
+RUN ./configure
+RUN make
+RUN make install
+
+RUN gem install bundler --version 1.12.5
+
+
+ENV INSTALL_PATH /spotlight_day_demo
+
+RUN cd / && git clone --depth 1 https://github.com/lsat12357/spotlight_day_demo.git $INSTALL_PATH
+
+WORKDIR $INSTALL_PATH
+RUN bundle install 
+
+RUN touch /var/firstrun
+
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
