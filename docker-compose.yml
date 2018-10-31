@@ -13,6 +13,19 @@ services:
       - mycore
     environment: 
       - VERBOSE=yes
+  db:
+    image: mariadb:5.5
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=ABRACADABRA
+      - MYSQL_PASSWORD=ABRACADABRA
+      - MYSQL_DATABASE=spotlightdev
+      - MYSQL_USER=root
+    volumes:
+      - db:/var/lib/mysql
+      - ./config/mysql/:/etc/mysql/conf.d:Z
   dev:
     build:
       dockerfile: Dockerfile-dev #this is just the path to the dockerfile
@@ -24,9 +37,11 @@ services:
       - "3000:3000"
     links:
       - solr
+      - db
     environment:
       - SOLR_URL=http://solr:8983/solr/mycore
       - OD_URL=http://oregondigital.org
     entrypoint: /entrypoint.sh
 volumes:
   data-solr-dev: {}
+  db: {}

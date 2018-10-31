@@ -8,9 +8,7 @@ if [[ -f /var/firstrun ]]; then
   #bundle exec rake spotlight:initialize
   /bin/rm /var/firstrun
 fi
-if [[ -f /var/firstrun ]];then
-  echo "firstrun exists "
-fi
+
 echo "in entrypoint"
 # Start up puma
-bundle exec rails s -p 3001 -b "0.0.0.0"
+bundle exec rails s -p 3000 -b "0.0.0.0"
